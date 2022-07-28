@@ -1,0 +1,15 @@
+{
+  "name": "inotes-backend",
+  "version": "1.0.0",
+  "description": "inotes - your notes on the cloud",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "mongoose": "^6.5.0"
+  }
+}
