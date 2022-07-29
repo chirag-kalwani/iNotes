@@ -14,10 +14,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    date:{
+    date: {
         type: Date,
         default: Date.now
     }
 });
-
-module.exports = mongoose.model('user', UserSchema);
+let User = mongoose.model('user', UserSchema);
+User.createIndexes().then(r => console.log(r)).catch(e => console.log(e)); // here as email is unique hence it consider as key
+module.exports = User;
