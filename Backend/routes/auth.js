@@ -8,15 +8,22 @@ router.post('/', [
         body('password').isLength({min: 5}),
         body('name').isLength({min: 3})
     ],
-    (req, res) => {
-
+    async (req, res) => {
         // Check if there is error or not
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({errors: errors.array()});
         }
-        const user = new User(req.body);// creating object User can print User.name .emai .password
-        user.save().then(() => res.send("Hello auth")).catch(e => res.status(400).send(e));
+        let user = await User.findOne({email: req.body.email});
+        if (user) {
+            return res.status(400).json({error: "A user with these email is already present"});
+        }
+        user = new User(req.body); // creating object User can print User.name .emai .password
+        let resObj = await user.save();
+        if (!resObj) {
+            return res.status(400).json({error: "Some error ocurr"});
+        }
+        res.status(200).json(resObj);
     }
 );
 
