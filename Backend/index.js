@@ -1,6 +1,5 @@
 const express = require('express');
 const connectToMongo = require('./db');
-const user = require('./models/User');
 connectToMongo();
 
 const port = 3000;
@@ -8,10 +7,13 @@ const localHost = '127.0.0.1';
 const app = express();
 
 app.use(express.json());
+// app.use(express.urlencoded()); // use in case ==> fetch from form data;
 // auth related endpoints
 app.use('/api/auth', require('./routes/auth'));
 // notes related endpoints
 app.use('/api/notes', require('./routes/notes'));
+// For serving static files
+app.use('/static', express.static('static'));
 
 
 app.get('/', (req, res) => {
