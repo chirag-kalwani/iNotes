@@ -3,9 +3,10 @@ const router = express.Router();
 const User = require('../models/User');
 const {body, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
-let jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+const fetchuser = require('../middleware/fetchuser');
 const JWT_SECRET = "Chiragisagoodboy";
-// create user using post request with end point "/api/auth/createuser"
+// Route1: No login required ==  create user using post request with end point "/api/auth/createuser"
 router.post('/createuser', [
         body('email', "Enter a valid email").isEmail(),
         body('password', "password length should be of minimum length 5").isLength({min: 5}),
@@ -48,33 +49,46 @@ router.post('/createuser', [
     }
 );
 
-
+// Route2: No login required ==  login user using post request with end point "/api/auth/createuser"
 router.post('/login', [
-    body('email', "Enter a valid email").isEmail(),
-    body('password', "Password should not be blank").exists()
-], async (req, res) => {
-    // Check if User enter there details correct or not by node module ==>  express-validator
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
-    const {email, password} = req.body;
-    try {
-        let user = await User.findOne({email: email});
-        if (!user) {
-            return res.status(400).json({error: "Please try to login with correct credenial"});
+        body('email', "Enter a valid email").isEmail(),
+        body('password', "Password should not be blank").exists()
+    ],
+    async (req, res) => {
+        // Check if User enter there details correct or not by node module ==>  express-validator
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({errors: errors.array()});
         }
-        const passwordCompare = await bcrypt.compare(password, user.password);
-        if (!passwordCompare) {
-            return res.status(400).json({error: "Please try to login with correct credenial"});
-        }
-        const payLoad = {
-            user: {
-                id: user.id
+        const {email, password} = req.body;
+        try {
+            let user = await User.findOne({email: email});
+            if (!user) {
+                return res.status(400).json({error: "Please try to login with correct credenial"});
             }
+            const passwordCompare = await bcrypt.compare(password, user.password);
+            if (!passwordCompare) {
+                return res.status(400).json({error: "Please try to login with correct credenial"});
+            }
+            const payLoad = {
+                user: {
+                    id: user.id
+                }
+            }
+            const authToken = jwt.sign(payLoad, JWT_SECRET);
+            res.status(200).json({authToken: authToken});
+        } catch (e) {
+            console.log(e);
+            res.status(500).send("Internal server error");
         }
-        const authToken = jwt.sign(payLoad, JWT_SECRET);
-        res.status(200).json({authToken: authToken});
+    });
+
+// Route 3 : logged in ==> get logged in user details // res.header == authtoken
+router.post('/getuser', fetchuser, async (req, res) => {
+    try {
+        let userId = req.user.id;
+        let user = await User.findOne({id: userId}).select('-password');
+        res.status(200).json(user);
     } catch (e) {
         console.log(e);
         res.status(500).send("Internal server error");
