@@ -5,11 +5,11 @@ const {body, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 let jwt = require('jsonwebtoken');
 const JWT_SECRET = "Chiragisagoodboy";
-// create user using post request with end point "/api/auth"
-router.post('/', [
-        body('email').isEmail(),
-        body('password').isLength({min: 5}),
-        body('name').isLength({min: 3})
+// create user using post request with end point "/api/auth/createuser"
+router.post('/createuser', [
+        body('email', "Enter a valid email").isEmail(),
+        body('password', "password length should be of minimum length 5").isLength({min: 5}),
+        body('name', "name length shoul be of length 3").isLength({min: 3})
     ],
     async (req, res) => {
         // Check if User enter there details correct or not by node module ==>  express-validator
@@ -22,7 +22,7 @@ router.post('/', [
         if (user) {
             return res.status(400).json({error: "A user with these email is already present"});
         }
-
+        // Create salt and encrypt the password of the user
         const salt = await bcrypt.genSalt(10);
         const secPass = await bcrypt.hash(req.body.password, salt);
         // if user is not awailable then create user
@@ -33,7 +33,13 @@ router.post('/', [
         }); // creating object User can print User.name .email .password
         // store created user in database
         let resObj = await user.save();
-        const authToken = jwt.sign({id: user.id}, JWT_SECRET);
+        // create authToken to verify the user
+        const payLoad = {
+            user: {
+                id: user.id
+            }
+        }
+        const authToken = jwt.sign(payLoad, JWT_SECRET);
         // check if there is some error ocur or not
         if (!resObj) {
             return res.status(500).json({error: "Some error ocurr"});
@@ -41,5 +47,38 @@ router.post('/', [
         res.status(200).json({authToken: authToken});
     }
 );
+
+
+router.post('/login', [
+    body('email', "Enter a valid email").isEmail(),
+    body('password', "Password should not be blank").exists()
+], async (req, res) => {
+    // Check if User enter there details correct or not by node module ==>  express-validator
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+    const {email, password} = req.body;
+    try {
+        let user = await User.findOne({email: email});
+        if (!user) {
+            return res.status(400).json({error: "Please try to login with correct credenial"});
+        }
+        const passwordCompare = await bcrypt.compare(password, user.password);
+        if (!passwordCompare) {
+            return res.status(400).json({error: "Please try to login with correct credenial"});
+        }
+        const payLoad = {
+            user: {
+                id: user.id
+            }
+        }
+        const authToken = jwt.sign(payLoad, JWT_SECRET);
+        res.status(200).json({authToken: authToken});
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Internal server error");
+    }
+});
 
 module.exports = router;
