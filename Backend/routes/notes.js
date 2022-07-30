@@ -71,4 +71,28 @@ router.put('/updatenote/:id', fetchuser,
         }
     });
 
+
+// route 4: delete notes
+router.delete('/deletenote/:id', fetchuser,
+    async (req, res) => {
+        try {
+            // find note
+            let findNote = await Notes.findById(req.params.id);
+            // if note with id is not found
+            if (!findNote) {
+                return res.status(404).send("Not Found");
+            }
+            // check the person who delete the note belong to the same person whose node is this
+            if (findNote.user.toString() !== req.user.id) {
+                return res.status(404).send("Not allowed");
+            }
+            // Valid user delete the note
+            findNote = await Notes.findByIdAndDelete(req.params.id);
+            res.status(200).json({delete: findNote});
+        } catch (e) {
+            console.log(e);
+            res.status(500).send("Internal error");
+        }
+    });
+
 module.exports = router;
