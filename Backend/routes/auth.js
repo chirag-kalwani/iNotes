@@ -83,7 +83,7 @@ router.post('/login', [
         }
     });
 
-// Route 3 : logged in ==> get logged in user details // res.header == authtoken
+// Route 3 : logged in ==> get logged in user details // res.header == auth-token
 router.post('/getuser', fetchuser, async (req, res) => {
     try {
         let userId = req.user.id;
