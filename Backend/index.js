@@ -2,7 +2,7 @@ const express = require('express');
 const connectToMongo = require('./db');
 connectToMongo();
 
-const port = 3000;
+const port = 5000;
 const localHost = '127.0.0.1';
 const app = express();
 
