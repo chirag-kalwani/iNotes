@@ -1,11 +1,12 @@
 const express = require('express');
+const cors = require('cors')
 const connectToMongo = require('./db');
 connectToMongo();
 
 const port = 5000;
 const localHost = '127.0.0.1';
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 // app.use(express.urlencoded()); // use in case ==> fetch from form data;
 // auth related endpoints

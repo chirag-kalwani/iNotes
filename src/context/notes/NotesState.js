@@ -2,65 +2,67 @@ import notesContext from "./NotesContext";
 import {useState} from "react";
 
 const NotesState = (props) => {
-    const notesInitial = [
-        {
-            "_id": "62e69020e7d4a8a4e4f4abcc",
-            "user": "62e68fdee7d4a8a4e4f4abc8",
-            "title": "great chirag ki kahani",
-            "description": "Cards assume no specific width to start, so they’ll be 100% wide unless otherwise stated. You can change this as needed with custom CSS, grid classes, grid Sass mixins, or utilities.",
-            "tag": "gretest of all time",
-            "date": "2022-07-31T14:22:24.123Z",
-            "__v": 0
-        },
-        {
-            "_id": "62e69020e7d4a8a4e4f4abcc",
-            "user": "62e68fdee7d4a8a4e4f4abc8",
-            "title": "great chirag ki kahani",
-            "description": "Cards assume no specific width to start, so they’ll be 100% wide unless otherwise stated. You can change this as needed with custom CSS, grid classes, grid Sass mixins, or utilities.",
-            "tag": "gretest of all time",
-            "date": "2022-07-31T14:22:24.123Z",
-            "__v": 0
-        },
-        {
-            "_id": "62e69020e7d4a8a4e4f4abcc",
-            "user": "62e68fdee7d4a8a4e4f4abc8",
-            "title": "great chirag ki kahani",
-            "description": "Cards assume no specific width to start, so they’ll be 100% wide unless otherwise stated. You can change this as needed with custom CSS, grid classes, grid Sass mixins, or utilities.",
-            "tag": "gretest of all time",
-            "date": "2022-07-31T14:22:24.123Z",
-            "__v": 0
-        },
-        {
-            "_id": "62e69020e7d4a8a4e4f4abcc",
-            "user": "62e68fdee7d4a8a4e4f4abc8",
-            "title": "great chirag ki kahani",
-            "description": "Cards assume no specific width to start, so they’ll be 100% wide unless otherwise stated. You can change this as needed with custom CSS, grid classes, grid Sass mixins, or utilities.",
-            "tag": "gretest of all time",
-            "date": "2022-07-31T14:22:24.123Z",
-            "__v": 0
-        },
-        {
-            "_id": "62e69020e7d4a8a4e4f4abcc",
-            "user": "62e68fdee7d4a8a4e4f4abc8",
-            "title": "great chirag ki kahani",
-            "description": "Cards assume no specific width to start, so they’ll be 100% wide unless otherwise stated. You can change this as needed with custom CSS, grid classes, grid Sass mixins, or utilities.",
-            "tag": "gretest of all time",
-            "date": "2022-07-31T14:22:24.123Z",
-            "__v": 0
-        },
-        {
-            "_id": "62e69040e7d4a8a4e4f4abcf",
-            "user": "62e68fdee7d4a8a4e4f4abc8",
-            "title": "great chirag ki kahani2",
-            "description": "Cards assume no specific width to start, so they’ll be 100% wide unless otherwise stated. You can change this as needed with custom CSS, grid classes, grid Sass mixins, or utilities.2",
-            "tag": "gretest of all time2",
-            "date": "2022-07-31T14:22:56.053Z",
-            "__v": 0
-        }
-    ];
-    const [notes, setNotes] = useState(notesInitial);
+    // States
+    const [notes, setNotes] = useState([{}]);
+    // Local Host
+    let host = "http://127.0.0.1:5000"
+    // Show notes to show all notes
+    const showNotes = async () => {
+        let response = await fetch(host + "/api/notes/fetchallnotes",
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNzdjNDk2YWY2NGUzODUzOGM5MDRhIn0sImlhdCI6MTY1OTMzNzgwMX0.AvsGclNZd5Pb0nNQNjmnptbkjo_EnXvjW5pRbg31imQ'
+                }
+            }
+        );
+        setNotes(await response.json());
+    };
+    //Add Notes
+    const addNote = async (title, description, tag) => {
+        let response = await fetch(host + "/api/notes/addnotes",
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNzdjNDk2YWY2NGUzODUzOGM5MDRhIn0sImlhdCI6MTY1OTMzNzgwMX0.AvsGclNZd5Pb0nNQNjmnptbkjo_EnXvjW5pRbg31imQ'
+                },
+                body: JSON.stringify({'title': title, 'description': description, 'tag': tag})
+            }
+        );
+        setNotes(notes.concat(await response.json()));
+    };
+    // Delete Notes
+    const deleteNote = async (id) => {
+        await fetch(host + `/api/notes/deletenote/${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNzdjNDk2YWY2NGUzODUzOGM5MDRhIn0sImlhdCI6MTY1OTMzNzgwMX0.AvsGclNZd5Pb0nNQNjmnptbkjo_EnXvjW5pRbg31imQ'
+                }
+            }
+        );
+        await showNotes();
+    };
+    // Edit Notes
+    const editNote = async (id, title, description, tag) => {
+        // await fetch(host + `/api/notes/updatenote/${id}`,
+        //     {
+        //         method: 'PUT',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNzdjNDk2YWY2NGUzODUzOGM5MDRhIn0sImlhdCI6MTY1OTMzNzgwMX0.AvsGclNZd5Pb0nNQNjmnptbkjo_EnXvjW5pRbg31imQ'
+        //         },
+        //         body: JSON.stringify({'title': title, 'description': description, 'tag': tag})
+        //     }
+        // );
+        // await showNotes();
+    };
     return (
-        <notesContext.Provider value={{notes: notes, setNotes: setNotes}}>
+        <notesContext.Provider
+            value={{notes: notes, addNote: addNote, deleteNote: deleteNote, editNote: editNote, showNotes: showNotes}}>
             {props.children}
         </notesContext.Provider>
     )

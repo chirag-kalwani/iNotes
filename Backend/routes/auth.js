@@ -37,7 +37,7 @@ router.post('/createuser', [
         // create authToken to verify the user
         const payLoad = {
             user: {
-                id: user.id
+                id: resObj._id
             }
         }
         const authToken = jwt.sign(payLoad, JWT_SECRET);
@@ -62,17 +62,17 @@ router.post('/login', [
         }
         const {email, password} = req.body;
         try {
-            let user = await User.findOne({email: email});
-            if (!user) {
+            let resObj = await User.findOne({email: email});
+            if (!resObj) {
                 return res.status(400).json({error: "Please try to login with correct credenial"});
             }
-            const passwordCompare = await bcrypt.compare(password, user.password);
+            const passwordCompare = await bcrypt.compare(password, resObj.password);
             if (!passwordCompare) {
                 return res.status(400).json({error: "Please try to login with correct credenial"});
             }
             const payLoad = {
                 user: {
-                    id: user.id
+                    id: resObj._id
                 }
             }
             const authToken = jwt.sign(payLoad, JWT_SECRET);
