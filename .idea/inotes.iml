@@ -11,5 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="b17af66125" level="application" />
     <orderEntry type="library" name="jquery-3.3.1.slim" level="application" />
+    <orderEntry type="library" name="d3508e81d7" level="application" />
+    <orderEntry type="library" name="jquery-3.4.1.slim" level="application" />
   </component>
 </module>

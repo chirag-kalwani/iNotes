@@ -1,4 +1,6 @@
 const express = require('express');
+const cors = require('cors');
+express().use(cors())
 const router = express.Router();
 const User = require('../models/User');
 const {body, validationResult} = require('express-validator');

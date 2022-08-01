@@ -48,17 +48,23 @@ const NotesState = (props) => {
     };
     // Edit Notes
     const editNote = async (id, title, description, tag) => {
-        // await fetch(host + `/api/notes/updatenote/${id}`,
-        //     {
-        //         method: 'PUT',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNzdjNDk2YWY2NGUzODUzOGM5MDRhIn0sImlhdCI6MTY1OTMzNzgwMX0.AvsGclNZd5Pb0nNQNjmnptbkjo_EnXvjW5pRbg31imQ'
-        //         },
-        //         body: JSON.stringify({'title': title, 'description': description, 'tag': tag})
-        //     }
-        // );
-        // await showNotes();
+        let headersList = {
+            "Accept": "*/*",
+            "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+            "Content-Type": "application/json",
+            "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNzdjNDk2YWY2NGUzODUzOGM5MDRhIn0sImlhdCI6MTY1OTMzNzgwMX0.AvsGclNZd5Pb0nNQNjmnptbkjo_EnXvjW5pRbg31imQ"
+        }
+        let bodyContent = JSON.stringify({
+            "title": title,
+            "description": description,
+            "tag": tag
+        });
+        await fetch(`http://127.0.0.1:5000/api/notes/updatenote/${id}`, {
+            method: "PUT",
+            body: bodyContent,
+            headers: headersList
+        });
+        await showNotes();
     };
     return (
         <notesContext.Provider
