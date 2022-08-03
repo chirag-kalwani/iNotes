@@ -8,10 +8,10 @@ function AddNote() {
         tag: "",
     });
     const context = useContext(notesContext);
-    const {addNote} = context;
-    const submitForm = async (e) => {
+    const {addNote, showAlert} = context;
+    const submitForm = (e) => {
         e.preventDefault();
-        await addNote(note.title, note.description, note.tag);
+        addNote(note.title, note.description, note.tag).then(showAlert("item added succesfully", "success")).catch((e) => showAlert(e, "warning"));
         setNote({title: "", description: "", tag: ""});
     };
     const onchange = (e) => {

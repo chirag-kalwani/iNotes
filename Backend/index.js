@@ -6,17 +6,23 @@ connectToMongo();
 const port = 5000;
 const localHost = '127.0.0.1';
 const app = express();
-app.use(cors());
-app.use((req, res, next) => {
-    //allow access from every, elminate CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.removeHeader('x-powered-by');
-    //set the allowed HTTP methods to be requested
-    res.setHeader('Access-Control-Allow-Methods', 'POST');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-    //headers clients can use in their requests
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    //allow request to continue and be handled by routes
+app.use(cors({origin: 'http://localhost:3000'}));
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
     next();
 });
 app.use(express.json());

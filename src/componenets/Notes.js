@@ -2,18 +2,27 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import notesContext from "../context/notes/NotesContext";
 import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
+import {useNavigate} from "react-router-dom";
 
 function Notes() {
+    let history = useNavigate();
     const context = useContext(notesContext);
-    const {notes, showNotes, editNote} = context;
+    const {notes, showNotes, editNote, showAlert} = context;
     useEffect(() => {
-        showNotes();
-        // eslint-disable-next-line
+        if (localStorage.getItem('authToken'))
+            showNotes().then().catch((e) => {
+                showAlert(e, "warning");
+            });
+        else {
+            showAlert("Please sign up or log in first", "warning");
+            history('/signup');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const ref = useRef(null);
     const closeRef = useRef(null);
     const updateNote = (not) => {
-        ref.current?.click();
+        ref.current.click();
         setNote(not);
     };
     const [note, setNote] = useState({
@@ -22,9 +31,9 @@ function Notes() {
         tag: "",
         _id: ""
     });
-    const saveChanges = async () => {
+    const saveChanges = () => {
         closeRef.current.click();
-        editNote(note._id, note.title, note.description, note.tag);
+        editNote(note._id, note.title, note.description, note.tag).then(showAlert("Edit note succesfully", 'success')).cache(e => showAlert(e, 'warning'));
     };
     const onchange = (e) => {
         if (e.target.id === 'title') {
@@ -54,11 +63,11 @@ function Notes() {
         <>
             {/*Add Note is a form to add a note*/}
             <AddNote/>
+            {/*Following is the form to update the note*/}
             <button type="button" className="btn btn-primary d-none" ref={ref} data-bs-toggle="modal"
                     data-bs-target="#exampleModal">
-                Launch demo modal
+                Edit Note
             </button>
-
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
                 <div className="modal-dialog">
@@ -94,7 +103,9 @@ function Notes() {
                             </form>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" ref={closeRef} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" ref={closeRef} className="btn btn-secondary"
+                                    data-bs-dismiss="modal">Close
+                            </button>
                             <button type="button" onClick={saveChanges} className="btn btn-primary">Save changes
                             </button>
                         </div>
@@ -102,10 +113,11 @@ function Notes() {
                 </div>
             </div>
 
+            {/*Following is the display of the notes*/}
             <h1 className="my-3">Your Notes</h1>
             <div className="row">
                 {
-                    notes.map((note, index) => {
+                    Array.from(notes).map(function (note, index) {
                         // NoteItem is pattern of one note
                         return <NoteItem key={index} updateNote={updateNote} note={note}/>;
                     })

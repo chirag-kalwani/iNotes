@@ -1,4 +1,7 @@
 const express = require('express');
+const cors = require('cors');
+let app = express();
+app.use(cors({origin: 'http://localhost:3000'}));
 const fetchuser = require('../middleware/fetchuser');
 const Notes = require('../models/Notes');
 const {body, validationResult} = require('express-validator');
@@ -34,15 +37,21 @@ router.post('/addnotes', fetchuser, [
             let resObj = await note.save()
             res.status(200).send(resObj);
         } catch (e) {
-            console.log(e);
-            res.status(500).send("Internal error");
+            res.status(500).send("Internal error due to " + e);
         }
     });
 
 // route 3: update notes
-router.put('/updatenote/:id', fetchuser,
+router.put('/updatenote/:id', [
+        body('title', "Enter Title of min length 3").isLength({min: 3}),
+        body('description', "Enter Description of min 5 and max 100").isLength({min: 5, max: 100})
+    ], fetchuser,
     async (req, res) => {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({errors: errors.array()});
+            }
             // create a new notes object
             let newNote = {};
             if (req.body.title) {
@@ -66,7 +75,6 @@ router.put('/updatenote/:id', fetchuser,
             findNote = await Notes.findByIdAndUpdate(req.params.id, {$set: newNote}, {new: true});
             res.status(200).json(findNote);
         } catch (e) {
-            console.log(e);
             res.status(500).send("Internal error");
         }
     });
