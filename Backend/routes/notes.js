@@ -1,11 +1,9 @@
 const express = require('express');
-const cors = require('cors');
-let app = express();
-app.use(cors({origin: 'http://localhost:3000'}));
 const fetchuser = require('../middleware/fetchuser');
 const Notes = require('../models/Notes');
 const {body, validationResult} = require('express-validator');
 const router = express.Router();
+
 // route 1: get all the notes
 router.get('/fetchallnotes', fetchuser, async (req, res) => {
     try {
@@ -17,6 +15,7 @@ router.get('/fetchallnotes', fetchuser, async (req, res) => {
     }
 });
 // route 2: add notes
+
 router.post('/addnotes', fetchuser, [
         body('title', "Enter Title of min length 3").isLength({min: 3}),
         body('description', "Enter Description of min 5 and max 100").isLength({min: 5, max: 100})
@@ -78,7 +77,6 @@ router.put('/updatenote/:id', [
             res.status(500).send("Internal error");
         }
     });
-
 
 // route 4: delete notes
 router.delete('/deletenote/:id', fetchuser,

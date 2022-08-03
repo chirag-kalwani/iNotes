@@ -1,7 +1,4 @@
 const express = require('express');
-const cors = require('cors');
-let app = express();
-app.use(cors({origin: 'http://localhost:3000'}));
 const router = express.Router();
 const User = require('../models/User');
 const {body, validationResult} = require('express-validator');

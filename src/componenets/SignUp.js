@@ -20,7 +20,7 @@ function SignUp() {
             "email": data.email,
             "password": data.password
         });
-        let response = await fetch("http://127.0.0.1:5000/api/auth/createuser", {
+        let response = await fetch("/api/auth/createuser", {
             method: "POST",
             body: bodyContent,
             headers: headersList

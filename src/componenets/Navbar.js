@@ -22,10 +22,6 @@ function Navbar() {
                             <Link className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
                                   aria-current="page" to="/">Home</Link>
                         </li>
-                        <li className="nav-item">
-                            <Link className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}
-                                  aria-current="page" to="/about">About</Link>
-                        </li>
                     </ul>
                     {
                         !localStorage.getItem('authToken') &&

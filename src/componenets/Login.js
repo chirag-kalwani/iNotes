@@ -10,8 +10,6 @@ function Login() {
     const LogIn = async (e) => {
         e.preventDefault();
         let headersList = {
-            "Accept": "*/*",
-            "User-Agent": "Thunder Client (https://www.thunderclient.com)",
             "Content-Type": "application/json"
         }
 
@@ -20,7 +18,7 @@ function Login() {
             "password": data.password
         });
 
-        let response = await fetch("http://127.0.0.1:5000/api/auth/login", {
+        let response = await fetch("/api/auth/login", {
             method: "POST",
             body: bodyContent,
             headers: headersList
